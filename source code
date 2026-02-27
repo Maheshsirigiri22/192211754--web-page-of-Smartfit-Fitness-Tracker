@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SmartFit - Fitness Tracker</title>
+
+<style>
+body{
+  font-family: Arial, sans-serif;
+  margin:0;
+  background: linear-gradient(135deg,#667eea,#764ba2);
+  color:white;
+  text-align:center;
+}
+
+header{
+  padding:20px;
+  font-size:28px;
+  font-weight:bold;
+}
+
+.container{
+  background:white;
+  color:black;
+  width:90%;
+  max-width:500px;
+  margin:20px auto;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+input,select{
+  width:90%;
+  padding:10px;
+  margin:8px 0;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+button{
+  padding:10px 20px;
+  margin-top:10px;
+  border:none;
+  border-radius:8px;
+  background:#667eea;
+  color:white;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+button:hover{
+  background:#5563c1;
+}
+
+.result{
+  margin-top:10px;
+  font-weight:bold;
+}
+
+.dark{
+  background:#111;
+  color:white;
+}
+
+.dark .container{
+  background:#222;
+  color:white;
+}
+</style>
+</head>
+
+<body>
+
+<header>💪 SmartFit - Fitness Tracker</header>
+
+<div class="container">
+
+<h3>BMI Calculator</h3>
+<input type="number" id="weight" placeholder="Weight (kg)">
+<input type="number" id="height" placeholder="Height (cm)">
+<button onclick="calculateBMI()">Calculate BMI</button>
+<p class="result" id="bmiResult"></p>
+
+<hr>
+
+<h3>Calorie Needs Calculator</h3>
+<input type="number" id="age" placeholder="Age">
+<select id="gender">
+<option>Male</option>
+<option>Female</option>
+</select>
+<select id="activity">
+<option value="1.2">Sedentary</option>
+<option value="1.375">Light Exercise</option>
+<option value="1.55">Moderate Exercise</option>
+<option value="1.725">Heavy Exercise</option>
+</select>
+<button onclick="calculateCalories()">Calculate Calories</button>
+<p class="result" id="calorieResult"></p>
+
+<hr>
+
+<h3>Workout Planner</h3>
+<select id="goal">
+<option>Fat Loss</option>
+<option>Muscle Gain</option>
+<option>Maintenance</option>
+</select>
+<button onclick="generateWorkout()">Generate Plan</button>
+<p class="result" id="workoutResult"></p>
+
+<hr>
+
+<h3>Weight Tracker</h3>
+<input type="number" id="newWeight" placeholder="Enter today's weight">
+<button onclick="saveWeight()">Save</button>
+<p class="result" id="weightHistory"></p>
+
+<hr>
+
+<button onclick="toggleDarkMode()">Toggle Dark Mode 🌙</button>
+
+</div>
+
+<script>
+// BMI
+function calculateBMI(){
+  let weight=document.getElementById("weight").value;
+  let height=document.getElementById("height").value;
+
+  let bmi=weight/((height/100)*(height/100));
+  let status="";
+
+  if(bmi<18.5) status="Underweight";
+  else if(bmi<25) status="Normal";
+  else if(bmi<30) status="Overweight";
+  else status="Obese";
+
+  document.getElementById("bmiResult").innerText=
+  "BMI: "+bmi.toFixed(2)+" ("+status+")";
+}
+
+// Calories
+function calculateCalories(){
+  let weight=document.getElementById("weight").value;
+  let height=document.getElementById("height").value;
+  let age=document.getElementById("age").value;
+  let gender=document.getElementById("gender").value;
+  let activity=document.getElementById("activity").value;
+
+  let bmr;
+
+  if(gender=="Male")
+    bmr=10*weight+6.25*height-5*age+5;
+  else
+    bmr=10*weight+6.25*height-5*age-161;
+
+  let calories=bmr*activity;
+
+  document.getElementById("calorieResult").innerText=
+  "Daily Calories Needed: "+calories.toFixed(0);
+}
+
+// Workout Plan
+function generateWorkout(){
+  let goal=document.getElementById("goal").value;
+  let plan="";
+
+  if(goal=="Fat Loss")
+    plan="Cardio 30 mins + HIIT + Abs Workout (5 days/week)";
+  else if(goal=="Muscle Gain")
+    plan="Weight Training Split (Chest, Back, Legs) + Protein Diet";
+  else
+    plan="Full Body Workout 3 days/week + Light Cardio";
+
+  document.getElementById("workoutResult").innerText=plan;
+}
+
+// Weight Tracker
+function saveWeight(){
+  let weight=document.getElementById("newWeight").value;
+  let history=JSON.parse(localStorage.getItem("weights")) || [];
+  history.push(weight);
+  localStorage.setItem("weights",JSON.stringify(history));
+  displayWeights();
+}
+
+function displayWeights(){
+  let history=JSON.parse(localStorage.getItem("weights")) || [];
+  document.getElementById("weightHistory").innerText=
+  "History: "+history.join(" kg, ")+" kg";
+}
+
+displayWeights();
+
+// Dark Mode
+function toggleDarkMode(){
+  document.body.classList.toggle("dark");
+}
+</script>
+
+</body>
+</html>
