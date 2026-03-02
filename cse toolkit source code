@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Advanced CSE Student Dashboard</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body{
+  display:flex;
+  min-height:100vh;
+  background: linear-gradient(135deg,#141e30,#243b55);
+  color:white;
+  transition:0.4s;
+}
+
+/* Sidebar */
+.sidebar{
+  width:220px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  padding:20px;
+}
+
+.sidebar h2{
+  margin-bottom:20px;
+}
+
+.sidebar button{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border:none;
+  border-radius:8px;
+  background:rgba(255,255,255,0.2);
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.sidebar button:hover{
+  background:#00c6ff;
+}
+
+/* Main Content */
+.main{
+  flex:1;
+  padding:30px;
+}
+
+.card{
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  padding:20px;
+  margin-bottom:20px;
+  border-radius:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.3);
+  animation:fadeIn 0.6s ease-in-out;
+}
+
+input,select,textarea{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border-radius:8px;
+  border:none;
+}
+
+button.action{
+  padding:10px 20px;
+  border:none;
+  border-radius:8px;
+  background:#00c6ff;
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button.action:hover{
+  background:#0072ff;
+  transform:scale(1.05);
+}
+
+.progress-bar{
+  width:100%;
+  background:#333;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:10px;
+}
+
+.progress{
+  height:15px;
+  width:0%;
+  background:#00ff88;
+  transition:0.5s;
+}
+
+.dark{
+  background:#111;
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:translateY(20px);}
+  to{opacity:1; transform:translateY(0);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+  <h2>💻 CSE Hub</h2>
+  <button onclick="scrollToSection('cgpa')">CGPA</button>
+  <button onclick="scrollToSection('roadmap')">Roadmap</button>
+  <button onclick="scrollToSection('dsa')">DSA Tracker</button>
+  <button onclick="scrollToSection('progress')">Progress</button>
+  <button onclick="toggleDarkMode()">🌙 Toggle Mode</button>
+</div>
+
+<div class="main">
+
+<div class="card" id="cgpa">
+  <h3>🎓 CGPA Calculator</h3>
+  <input type="number" id="g1" placeholder="Sem 1 GPA">
+  <input type="number" id="g2" placeholder="Sem 2 GPA">
+  <input type="number" id="g3" placeholder="Sem 3 GPA">
+  <button class="action" onclick="calculateCGPA()">Calculate</button>
+  <p id="cgpaResult"></p>
+</div>
+
+<div class="card" id="roadmap">
+  <h3>📚 Year Roadmap</h3>
+  <select id="year">
+    <option>1st Year</option>
+    <option>2nd Year</option>
+    <option>3rd Year</option>
+    <option>4th Year</option>
+  </select>
+  <button class="action" onclick="showRoadmap()">Show</button>
+  <p id="roadmapResult"></p>
+</div>
+
+<div class="card" id="dsa">
+  <h3>🧠 DSA Practice Tracker</h3>
+  <input type="text" id="problem" placeholder="Problem Name">
+  <button class="action" onclick="addProblem()">Add</button>
+  <p id="problemList"></p>
+</div>
+
+<div class="card" id="progress">
+  <h3>📈 Placement Preparation Progress</h3>
+  <input type="number" id="progressInput" placeholder="Enter completion %">
+  <button class="action" onclick="updateProgress()">Update</button>
+  <div class="progress-bar">
+    <div class="progress" id="progressBar"></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+
+// Scroll Navigation
+function scrollToSection(id){
+  document.getElementById(id).scrollIntoView({behavior:'smooth'});
+}
+
+// CGPA
+function calculateCGPA(){
+  let g1=parseFloat(g1.value)||0;
+  let g2=parseFloat(g2.value)||0;
+  let g3=parseFloat(g3.value)||0;
+  let count=[g1,g2,g3].filter(g=>g>0).length;
+  let cgpa=(g1+g2+g3)/count;
+  cgpaResult.innerText="CGPA: "+cgpa.toFixed(2);
+}
+
+// Roadmap
+function showRoadmap(){
+  let year=document.getElementById("year").value;
+  let data={
+    "1st Year":"C/Python, HTML, Git",
+    "2nd Year":"DSA, OOPS, DBMS",
+    "3rd Year":"Projects, Internships",
+    "4th Year":"Mock Interviews, Placement Prep"
+  };
+  roadmapResult.innerText=data[year];
+}
+
+// DSA Tracker
+function addProblem(){
+  let name=problem.value;
+  let problems=JSON.parse(localStorage.getItem("problems"))||[];
+  problems.push(name);
+  localStorage.setItem("problems",JSON.stringify(problems));
+  problemList.innerText="Solved: "+problems.join(", ");
+  problem.value="";
+}
+
+// Progress Bar
+function updateProgress(){
+  let percent=document.getElementById("progressInput").value;
+  document.getElementById("progressBar").style.width=percent+"%";
+}
+
+// Dark Mode
+function toggleDarkMode(){
+  document.body.classList.toggle("dark");
+}
+
+</script>
+
+</body>
+</html>
